@@ -6,6 +6,7 @@ class Director {
     constructor() {
         this.dataStore = DataStore.getInstance();
         this.moveSpeed = 2;
+        this.restart = 0;
         this.pause = false;
     }
 
@@ -17,8 +18,8 @@ class Director {
     }
 
     createPencil() {
-        const minTop = window.innerHeight / 8;
-        const maxTop = window.innerHeight / 2;
+        const minTop = this.dataStore.screenWidth / 8;
+        const maxTop = this.dataStore.screenHeight / 2;
         let top = minTop + Math.random() * (maxTop - minTop);
         this.dataStore.get('pencils').push(new UpPencil(top));
         this.dataStore.get('pencils').push(new DownPencil(top));
@@ -47,23 +48,11 @@ class Director {
 
     static isStrikeReal(birdBorder, pencilBorder) {
         let result = false;
-        if(pencilBorder.top > 0){
-            console.log([
-                birdBorder.top < pencilBorder.bottom,
-                birdBorder.bottom > pencilBorder.top,
-                birdBorder.right > pencilBorder.left,
-                birdBorder.left < pencilBorder.right,
-                birdBorder,
-                pencilBorder
-            ]);
-        }
         if(birdBorder.top < pencilBorder.bottom && // true
             birdBorder.bottom > pencilBorder.top && // true
             birdBorder.right > pencilBorder.left && // true
             birdBorder.left < pencilBorder.right // true
         ){
-            console.log('birdBorder', birdBorder);
-            console.log('pencilBorder', pencilBorder);
             result = true;
         }
         return result;
@@ -84,8 +73,8 @@ class Director {
             right: birds.birdsX[0] + birds.birdsWidth[0]
         };
         const pencils = this.dataStore.get('pencils');
+        const score = this.dataStore.get('score');
         const length = pencils.length;
-        // console.log(length);
         for(let i=0; i < length; i++) {
             const pencil = pencils[i];
             // 铅笔的碰撞模型
@@ -99,6 +88,12 @@ class Director {
                 console.log('撞到了');
                 this.isGameOver = true;
             }
+        }
+
+        //加分逻辑
+        if(birds.birdsX[0] > (pencils[0].x + pencils[0].width) && score.isScore) {
+            score.isScore = false;
+            score.scoreNumber++;
         }
     }
 
@@ -120,19 +115,30 @@ class Director {
             if(pencil[0].x + pencil[0].width <= 0 && pencil.length === 4){
                 pencil.shift();
                 pencil.shift();
+                this.dataStore.get('score').isScore = true;
             }
-            if(pencil[0].x <= (window.innerWidth - pencil[0].width) / 2 && pencil.length === 2) {
+            if(pencil[0].x <= (this.dataStore.screenWidth - pencil[0].width) / 2 && pencil.length === 2) {
                 this.createPencil();
             }
             this.dataStore.get('pencils').forEach((value)=>{
                 value.draw();
             });
             this.dataStore.get('land').draw();
+            this.dataStore.get('score').draw();
             this.dataStore.get('birds').draw();
         } else {
             console.log('游戏结束');
+            wx.vibrateLong({
+                success: () => {
+                    console.log('震动')
+                }
+            });
+            this.dataStore.get('startButton').draw();
+            this.restart = (new Date()).getTime();
             cancelAnimationFrame(this.dataStore.get('timer'));
             this.dataStore.destroy();
+            // 微信的垃圾回收
+            wx.triggerGC();
         }
     }
 }

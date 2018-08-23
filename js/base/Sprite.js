@@ -8,6 +8,8 @@ class Sprite {
                 width = 0, height = 0) {
         this.dataStore = DataStore.getInstance();
         this.ctx = this.dataStore.ctx;
+        this.screenWidth = this.dataStore.screenWidth;
+        this.screenHeight = this.dataStore.screenHeight;
         this.img = img;
         this.srcX = srcX;
         this.srcY = srcY;

@@ -10,7 +10,7 @@
 	"compileType": "game",
 	"libVersion": "game",
 	"appid": "wx8daa2993090789bb",
-	"projectname": "flyBirdLearning",
+	"projectname": "flyBirdLearningWeixin",
 	"condition": {
 		"search": {
 			"current": -1,

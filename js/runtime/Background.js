@@ -1,4 +1,5 @@
 import Sprite from "../base/Sprite.js";
+import DataStore from "../base/DataStore.js";
 
 class Background extends Sprite{
     constructor() {
@@ -7,7 +8,7 @@ class Background extends Sprite{
             0,0,
             image.width,image.height,
             0,0,
-            window.innerWidth,window.innerHeight
+            DataStore.getInstance().screenWidth,DataStore.getInstance().screenHeight
         )
     }
 }

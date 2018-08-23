@@ -17,8 +17,8 @@ class Birds extends Sprite{
         this.clippingY = [10, 10, 10];
         this.clippingWidth = [34, 34, 34];
         this.clippingHeight = [24, 24, 24];
-        const birdX = window.innerWidth / 4;
-        const birdY = window.innerHeight / 2;
+        const birdX = this.screenWidth / 4;
+        const birdY = this.screenHeight / 2;
         const birdWidth = 34;
         const birdHeight = 24;
         this.birdsX = [birdX, birdX, birdX];
